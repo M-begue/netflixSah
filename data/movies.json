@@ -38,7 +38,7 @@
  "rating": 8.6
  },
 
- {
+{
  "id": 4,
  "title": "Pulp Fiction",
  "description": "Les histoires entrelacées de criminels, d'un boxeur et d'un couple de braqueurs dans le Los Angeles criminel.",
@@ -49,9 +49,9 @@
  "duration": 154,
   "price": 3.99,
  "rating": 8.9
- },
+},
  
- {
+{
  "id": 5,
  "title": "Forrest Gump",
  "description": "L'histoire de Forrest Gump, un homme simple d'esprit qui traverse plusieurs décennies de l'histoire américaine.",
@@ -62,5 +62,5 @@
  "duration": 142,
  "price": 3.99,
  "rating": 8.8
- }
+}
 ] 
