@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../common/Button';
 
  // Couleurs par genre
@@ -10,10 +12,30 @@ import Button from '../common/Button';
  'Thriller': 'bg-gray-500'
  };
 
-function MovieCard({ movie }) {
- return (
+function MovieCard({ movie, onAddToCart }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(movie.likes ?? 0);
+
+  const handleCardClick = () => {
+    navigate(`/movie/${movie.id}`, { state: { from: location.pathname } });
+  };
+
+  const toggleLike = (e) => {
+    e.stopPropagation();
+    if (isLiked) {
+      setIsLiked(false);
+      setLikes((l) => Math.max(0, l - 1));
+    } else {
+      setIsLiked(true);
+      setLikes((l) => l + 1);
+    }
+  };
+
+  return (
  <div className="group relative overflow-hidden rounded-lg cursor-pointer
-transition-transform duration-300 hover:scale-105">
+transition-transform duration-300 hover:scale-105" onClick={handleCardClick}>
  {/* Image principale */}
  <div className="relative aspect-[2/3]">
  <img
@@ -31,15 +53,18 @@ py-1 rounded">
  </div>
  </div>
 
- {/* Badge de genre */}
- <div className={`absolute top-2 left-2 ${genreColors[movie.genre] || 'bg-gray-500'} px-2 py-1 rounded text-xs font-bold text-white`}>
+  {/* Badge de genre */}
+ <div className={`absolute bottom-2 left-2 ${genreColors[movie.genre] || 'bg-gray-500'} px-2 py-1 rounded text-xs font-bold text-white`}>
  {movie.genre}
  </div>
 
  {/* Overlay au hover */} 
 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent
 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-    <h3 className="text-xl font-bold mb-2">{movie.title}</h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-xl font-bold">{movie.title}</h3>
+          <button onClick={toggleLike} className={`px-4 py-2 rounded ${isLiked ? 'bg-red-500' : 'bg-gray-500'} text-white`}>{isLiked ? '❤' : '🤍'} {likes} likes</button>
+        </div>
 
     <div className="flex items-center space-x-3 mb-3 text-sm">
     <span className="text-green-400 font-semibold">{movie.rating}/10</span>
@@ -52,10 +77,10 @@ opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col 
  </p>
 
  <div className="flex flex-col sm:flex-row gap-2">
- <Button size="sm" className="flex-1">
+ <Button size="sm" className="flex-1" onClick={(e) => { e.stopPropagation(); onAddToCart && onAddToCart(movie); }}>
  ▶ Louer {movie.price}€
  </Button>
- <Button variant="outline" size="sm" className="flex-1">
+ <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
  + Info
  </Button>
  </div>

@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import SearchBar from "./SearchBar";
+import { Link, NavLink } from 'react-router-dom';
+import SearchBar from "../movies/SearchBar";
+import CartButton from "./CartButton";
 
-function Navbar() {
+function Navbar({ movies, onSearch, cartItems, onAddToCart, onRemoveFromCart }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Note : useEffect sera vu au TP 03
@@ -26,26 +28,32 @@ function Navbar() {
             {/* Navigation Links */}
             <ul className="hidden md:flex space-x-6">
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
-                  Accueil
-                </a>
+                <NavLink to="/" className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white' }>
+                Accueil 
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
+                <NavLink to="/movies" className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white' }>
                   Films
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
+                <NavLink to="/my-rentals" className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white' }>
                   Mes locations
-                </a>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/login" className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white' }>
+                  Connexion
+                </NavLink>
               </li>
             </ul>
           </div>
 
           {/* User Section */}
           <div className="flex items-center space-x-4">
-            <SearchBar />
+            <SearchBar movies={movies} onSearch={onSearch} />
+            <CartButton cartItems={cartItems} onRemoveFromCart={onRemoveFromCart} />
             <div className="w-8 h-8 bg-primary rounded flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors">
               <span className="text-sm font-bold">U</span>
             </div>
