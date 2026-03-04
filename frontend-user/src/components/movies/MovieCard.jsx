@@ -35,9 +35,9 @@ function MovieCard({ movie, onAddToCart }) {
 
   return (
  <div className="group relative overflow-hidden rounded-lg cursor-pointer
-transition-transform duration-300 hover:scale-105" onClick={handleCardClick}>
+transition-transform duration-300 hover:scale-105">
  {/* Image principale */}
- <div className="relative aspect-[2/3]">
+ <div className="relative aspect-2/3">
  <img
  src={movie.poster}
  alt={movie.title}
@@ -59,7 +59,7 @@ py-1 rounded">
  </div>
 
  {/* Overlay au hover */} 
-<div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent
+<div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-transparent
 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold">{movie.title}</h3>
@@ -80,7 +80,7 @@ opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col 
  <Button size="sm" className="flex-1" onClick={(e) => { e.stopPropagation(); onAddToCart && onAddToCart(movie); }}>
  ▶ Louer {movie.price}€
  </Button>
- <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
+ <Button variant="outline" size="sm" className="flex-1" onClick={(e) => { e.stopPropagation(); handleCardClick();}}>
  + Info
  </Button>
  </div>

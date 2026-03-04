@@ -47,7 +47,7 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto w-full">
-        <h2 className="text-2xl font-bold mb-4 text-center">Connexion</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Se connecter</h2>
         <input
           name="email"
           type="email"

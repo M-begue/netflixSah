@@ -93,6 +93,7 @@ function Register() {
             placeholder="Mot de passe"
             className="px-4 py-2 border rounded bg-gray-800 text-white"
           />
+          {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
           <input
             name="confirmPassword"
             type="password"
@@ -102,7 +103,7 @@ function Register() {
             className="px-4 py-2 border rounded bg-gray-800 text-white"
           />
           {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword}</p>}
-          <button type="submit" disabled={loading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-semibold disabled:opacity-50">
+          <button type="submit" disabled={loading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-red-600 rounded font-semibold disabled:opacity-50">
             {loading ? 'Patientez...' : 'S\'inscrire'}
           </button>
           <button

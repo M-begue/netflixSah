@@ -17,12 +17,6 @@ function NotFound() {
           >
             Retour à l'accueil
           </button>
-          <button
-            onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition"
-          >
-            ← Retour
-          </button>
         </div>
       </div>
     </div>

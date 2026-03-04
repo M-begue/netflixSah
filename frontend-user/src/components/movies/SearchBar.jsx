@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SearchBar({ movies, onSearch }) {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +12,7 @@ function SearchBar({ movies, onSearch }) {
       // Filtrer les films en fonction du titre et la description selon searchTerm
       const filtered = movies
         .filter((m) =>
-          m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          m.description.toLowerCase().includes(searchTerm.toLowerCase())
+          m.title.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .slice(0, 5);
       
@@ -26,8 +27,15 @@ function SearchBar({ movies, onSearch }) {
   const handleSelect = (movie) => {
     setSearchTerm(movie.title);
     setIsOpen(false);
-    // Action lors de la sélection
-    onSearch(movie);
+    // Rediriger vers la page de recherche
+    navigate(`/search?q=${encodeURIComponent(movie.title)}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      setIsOpen(false);
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
   };
 
   const handleFocus = () => {
@@ -43,6 +51,7 @@ function SearchBar({ movies, onSearch }) {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           placeholder="Rechercher un film..."
           className="w-full px-4 py-2 pl-10 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-primary text-white"

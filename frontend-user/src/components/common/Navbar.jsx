@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import SearchBar from "../movies/SearchBar";
 import CartButton from "./CartButton";
@@ -6,15 +6,21 @@ import CartButton from "./CartButton";
 function Navbar({ movies, onSearch, cartItems, onAddToCart, onRemoveFromCart }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Note : useEffect sera vu au TP 03
-  // Pour l'instant, version statique
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-colors duration-300 ${
         isScrolled
           ? 'bg-black'
-          : 'bg-gradient-to-b from-black/80 to-transparent'
+          : 'bg-linear-to-b from-black/80 to-transparent'
       }`}
     >
       <div className="container mx-auto px-4 py-4">
@@ -22,14 +28,14 @@ function Navbar({ movies, onSearch, cartItems, onAddToCart, onRemoveFromCart }) 
           {/* Logo */}
           <div className="flex items-center space-x-8">
             <h1 className="text-primary text-3xl font-bold tracking-tight">
-              NETFLIX SAH
+              NETFLIX
             </h1>
 
             {/* Navigation Links */}
             <ul className="hidden md:flex space-x-6">
               <li>
                 <NavLink to="/" className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white' }>
-                Accueil 
+                  Accueil 
                 </NavLink>
               </li>
               <li>

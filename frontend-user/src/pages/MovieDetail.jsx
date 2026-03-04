@@ -1,13 +1,55 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import movies from '../../../data/movies.json';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/layout/Footer';
+import Breadcrumb from '../components/common/Breadcrumb';
 
 function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [notification, setNotification] = useState(null);
 
   const movie = movies.find((m) => m.id === parseInt(id));
+
+  const handleRent = () => {
+    // Vérifier si l'utilisateur est connecté
+    const user = localStorage.getItem('user');
+    if (!user) {
+      setNotification({ type: 'error', message: 'Veuillez vous connecter pour louer un film' });
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+
+    // Créer la location
+    const rental = {
+      ...movie,
+      rentalId: `${movie.id}-${Date.now()}`, // ID unique pour chaque location
+      rentalDate: new Date().toISOString(),
+      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 jours
+    };
+
+    // Récupérer les locations existantes
+    const stored = localStorage.getItem('rentals');
+    const existingRentals = stored ? JSON.parse(stored) : [];
+
+    // Vérifier si déjà loué
+    const alreadyRented = existingRentals.some((r) => r.id === movie.id);
+
+    if (alreadyRented) {
+      setNotification({ type: 'error', message: 'Vous avez déjà loué ce film' });
+      return;
+    }
+
+    // Ajouter la nouvelle location et sauvegarder
+    const updatedRentals = [...existingRentals, rental];
+    localStorage.setItem('rentals', JSON.stringify(updatedRentals));
+
+    setNotification({ type: 'success', message: 'Film loué avec succès !' });
+
+    // Rediriger vers MyRentals après 2 secondes
+    setTimeout(() => navigate('/my-rentals'), 2000);
+  };
 
   if (!movie) {
     return (
@@ -36,27 +78,30 @@ function MovieDetail() {
 
   return (
     <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
-      <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-20 right-4 px-6 py-3 rounded-lg shadow-xl z-50 ${
+          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
+          {notification.message}
+        </div>
+      )}
       
+      <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
+    
       <div className="flex-1 flex flex-col pt-20">
-        {/* Bouton Retour */}
-        <div className="container mx-auto px-4 py-16">
-          <button
-            onClick={handleBackClick}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition"
-          >
-            ← Retour
-          </button>
+        <div className="container mx-auto px-4 pt-24">
+          <Breadcrumb items={[ { label: 'Films', path: '/' }, { label: movie.genre, path: `/?genre=${movie.genre}` }, { label: movie.title }]} />
         </div>
 
         {/* Image de fond */}
-        <div className="relative h-80 w-full bg-gradient-to-b from-gray-900 via-gray-900/80 to-black">
+        <div className="relative h-80 w-full bg-linear-to-b from-gray-900 via-gray-900/80 to-black">
           <img
             src={movie.backdrop}
             alt={movie.title}
             className="w-full h-full object-cover opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-black via-black/50 to-transparent"></div>
           
           {/* Titre + infos sur l'image */}
           <div className="absolute bottom-0 left-0 right-0 p-8 flex items-end gap-6">
@@ -87,10 +132,10 @@ function MovieDetail() {
 
               {/* Bouton Louer */}
               <button
-                onClick={() => navigate('/cart', { state: { movie: movie } })}
+                onClick={handleRent}
                 className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded font-bold transition mb-8"
               >
-                ▶ Louer {movie.price}€
+                🎬 Louer pour {movie.price}€
               </button>
 
               {/* Informations */}

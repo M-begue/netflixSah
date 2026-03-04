@@ -11,10 +11,6 @@ function CartButton({ cartItems, onAddToCart, onRemoveFromCart }) {
     setShowCart(!showCart);
   };
 
-  const handleViewCart = () => {
-    navigate('/cart');
-    setShowCart(false);
-  };
 
   return (
     <div className="relative flex">
@@ -60,12 +56,6 @@ function CartButton({ cartItems, onAddToCart, onRemoveFromCart }) {
                   </div>
                 ))}
               </div>
-              <button
-                onClick={handleViewCart}
-                className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-semibold transition"
-              >
-                Voir le panier
-              </button>
             </>
           ) : (
             <p className="text-gray-400 text-center py-4">Panier vide</p>
