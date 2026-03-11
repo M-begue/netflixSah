@@ -5,9 +5,9 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [touched, setTouched] = useState({ email: false, password: false });
+  const [setTouched] = useState({ email: false, password: false });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
 
   const validate = () => {
     const errs = {};

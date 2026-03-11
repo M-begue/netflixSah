@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-function CartButton({ cartItems, onAddToCart, onRemoveFromCart }) {
-  const navigate = useNavigate();
+function CartButton({ cartItems, onRemoveFromCart }) {
   const [showCart, setShowCart] = useState(false);
 
   const cartCount = cartItems.length;

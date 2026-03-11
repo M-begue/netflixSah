@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import SearchBar from "../movies/SearchBar";
 import CartButton from "./CartButton";
 
-function Navbar({ movies, onSearch, cartItems, onAddToCart, onRemoveFromCart }) {
+function Navbar({ movies, onSearch, cartItems, onRemoveFromCart }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {

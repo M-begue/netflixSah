@@ -39,7 +39,7 @@ function Home() {
   return (
     <div className="bg-black text-white min-h-screen">
       <Navbar movies={allMovies} onSearch={handleMovieSearch} cartItems={cartItems} onAddToCart={addToCart} onRemoveFromCart={removeFromCart} />
-      <MovieHero movie={featuredMovie} />
+      <MovieHero movie={featuredMovie} onAddToCart={addToCart} />
       
       <MovieFilter movies={allMovies} onFilter={setFilteredMovies} />
       <MovieList title="Films disponibles" movies={filteredMovies} onAddToCart={addToCart} />

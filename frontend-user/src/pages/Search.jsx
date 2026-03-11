@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams} from 'react-router-dom';
 import movies from '../../../data/movies.json';
 import Navbar from '../components/common/Navbar';
 import MovieList from '../components/movies/MovieList';
@@ -7,12 +7,11 @@ import Footer from '../components/layout/Footer';
 
 function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const q = searchParams.get('q') || '';
   const genre = searchParams.get('genre') || 'Tous les genres';
   const sort = searchParams.get('sort') || 'relevance';
 
-  const [query, setQuery] = useState(q);
+  const [query] = useState(q);
 
   const genres = useMemo(() => [
     'Tous les genres',

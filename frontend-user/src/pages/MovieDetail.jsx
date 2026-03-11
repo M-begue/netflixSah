@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import movies from '../../../data/movies.json';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/layout/Footer';
@@ -71,10 +71,6 @@ function MovieDetail() {
       </div>
     );
   }
-
-  const handleBackClick = () => {
-    navigate(-1);
-  };
 
   return (
     <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">

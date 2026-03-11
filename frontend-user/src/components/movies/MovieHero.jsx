@@ -1,15 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../common/Button';
-function MovieHero({ movie }) {
+function MovieHero({ movie, onAddToCart }) {
  const navigate = useNavigate();
  const location = useLocation();
 
  const handleMoreInfo = () => {
    navigate(`/movie/${movie.id}`, { state: { from: location.pathname } });
- };
-
- const handleRent = () => {
-   console.log('Louer le film:', movie.title);
  };
 
  return (
@@ -22,9 +18,9 @@ function MovieHero({ movie }) {
  className="w-full h-full object-cover"
  />
  {/* Gradient overlays */}
- <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"
+ <div className="absolute inset-0 bg-linear-to-r from-black via-black/70 to-transparent"
 />
- <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+ <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
  </div>
  {/* Content */}
  <div className="relative container mx-auto px-4 h-full flex items-center">
@@ -47,7 +43,7 @@ function MovieHero({ movie }) {
  {movie.description}</p>
  {/* Actions */}
  <div className="flex flex-col sm:flex-row gap-4">
- <Button size="lg" className="shadow-2xl" onClick={handleRent}>
+ <Button size="lg" className="shadow-2xl" onClick={(e) => { e.stopPropagation(); onAddToCart && onAddToCart(movie); }}>
  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
  <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5
 1.5 0 000-2.538L6.3 2.84z" /></svg>
