@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/database.js';
 import mongoose from "mongoose";
+import moviesRoutes from './routes/movie.routes.js';
+import rentalRoutes from './routes/rental.routes.js';
+
 // Charger les variables d'environnement
 dotenv.config();
 // Initialiser Express
@@ -24,6 +27,7 @@ if (process.env.NODE_ENV === 'development') {
  next();
  });
 }
+
 // Routes de test
 app.get('/', (req, res) => {
  res.json({
@@ -37,6 +41,9 @@ app.get('/', (req, res) => {
  }
  });
 });
+
+app.use('/api/movies', moviesRoutes);
+app.use('/api/rentals', rentalRoutes);
 app.get('/api/health', (req, res) => {
  res.json({
  status: 'OK',

@@ -10,8 +10,17 @@ function Search() {
   const q = searchParams.get('q') || '';
   const genre = searchParams.get('genre') || 'Tous les genres';
   const sort = searchParams.get('sort') || 'relevance';
+  const [loading, setLoading] = useState(true);
 
   const [query] = useState(q);
+
+  useState(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  
+    return () => clearTimeout(timer);
+  }, []);
 
   const genres = useMemo(() => [
     'Tous les genres',
@@ -39,6 +48,16 @@ function Search() {
     return sorted;
   }, [q, genre, sort]);
 
+
+  if(loading) {
+    return (
+      <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
+        <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
+        <div className="w-24 h-24 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-xl">Recherche du film...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black text-white min-h-screen">

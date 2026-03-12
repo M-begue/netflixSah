@@ -9,8 +9,18 @@ function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [notification, setNotification] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const movie = movies.find((m) => m.id === parseInt(id));
+
+  useState(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
 
   const handleRent = () => {
     // Vérifier si l'utilisateur est connecté
@@ -50,6 +60,16 @@ function MovieDetail() {
     // Rediriger vers MyRentals après 2 secondes
     setTimeout(() => navigate('/my-rentals'), 2000);
   };
+
+  if(loading) {
+    return (
+      <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
+        <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
+        <div className="w-24 h-24 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-xl">Chargement des infos du film...</p>
+      </div>
+    );
+  }
 
   if (!movie) {
     return (
