@@ -1,20 +1,23 @@
 import { useState } from 'react';
+import { useCart } from '../../context/CartContext'; 
 
-function CartButton({ cartItems, onRemoveFromCart }) {
+function CartButton() {
   const [showCart, setShowCart] = useState(false);
+  
+  const { cart, removeFromCart } = useCart();
 
+  const cartItems = cart || [];
   const cartCount = cartItems.length;
 
   const toggleShow = () => {
     setShowCart(!showCart);
   };
 
-
   return (
     <div className="relative flex">
       <button
         onClick={toggleShow}
-        className="relative hover:text-gray-300 transition"
+        className="relative hover:text-gray-300 transition focus:outline-none"
       >
         <svg
           className="w-6 h-6"
@@ -31,7 +34,7 @@ function CartButton({ cartItems, onRemoveFromCart }) {
         </svg>
 
         {cartCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-primary rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+          <span className="absolute -top-2 -right-2 bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
             {cartCount}
           </span>
         )}
@@ -39,24 +42,48 @@ function CartButton({ cartItems, onRemoveFromCart }) {
 
       {/* Dropdown du panier */}
       {showCart && (
-        <div className="absolute right-0 mt-8 w-80 bg-gray-900 border border-gray-700 rounded-lg shadow-xl p-4 z-20">
+        <div className="absolute right-0 mt-10 w-80 bg-black/95 backdrop-blur-md border border-gray-800 rounded-lg shadow-2xl p-4 z-50">
+          <h4 className="text-sm font-bold mb-3 border-b border-gray-800 pb-2">Mon Panier</h4>
+          
           {cartItems.length > 0 ? (
-            <>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="space-y-2">
+              <div className="max-h-64 overflow-y-auto custom-scrollbar">
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    onDoubleClick={() => onRemoveFromCart(item.id)}
-                    className="flex items-center justify-between bg-gray-800 p-2 rounded cursor-pointer hover:bg-gray-700 transition"
+                    className="group flex items-center justify-between bg-gray-900/50 p-2 rounded mb-2 border border-transparent hover:border-gray-700 transition"
                   >
-                    <p className="text-white text-sm font-semibold">{item.title}</p>
-                    <p className="text-primary text-xs font-bold">{item.price}€</p>
+                    <div className="flex flex-col">
+                      <p className="text-white text-sm font-semibold truncate w-40">{item.title}</p>
+                      <p className="text-red-500 text-xs font-bold">{item.price}€</p>
+                    </div>
+                    
+                    <button 
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-gray-500 hover:text-red-500 text-xs transition p-1"
+                    >
+                      Supprimer
+                    </button>
                   </div>
                 ))}
               </div>
-            </>
+              
+              <div className="pt-2 border-t border-gray-800">
+                <button 
+                  onClick={() => {
+                    window.location.href = '/cart'; // Ou navigate('/cart') si tu importes useNavigate
+                    setShowCart(false);
+                  }}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-2 rounded transition"
+                >
+                  Voir mon panier complet
+                </button>
+              </div>
+            </div>
           ) : (
-            <p className="text-gray-400 text-center py-4">Panier vide</p>
+            <div className="py-8 text-center">
+              <p className="text-gray-500 text-sm">Votre panier est vide</p>
+            </div>
           )}
         </div>
       )}

@@ -1,116 +1,101 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState} from 'react';
+import { useState, useEffect } from 'react';
 import movies from '../../../data/movies.json';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/layout/Footer';
 import Breadcrumb from '../components/common/Breadcrumb';
+import { useCart } from '../context/CartContext';
 
 function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  const { addToCart, isInCart, isRented } = useCart();
+
   const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const movie = movies.find((m) => m.id === parseInt(id));
 
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
-
+    }, 800);
     return () => clearTimeout(timer);
   }, []);
 
-
-  const handleRent = () => {
-    // Vérifier si l'utilisateur est connecté
-    const user = localStorage.getItem('user');
-    if (!user) {
-      setNotification({ type: 'error', message: 'Veuillez vous connecter pour louer un film' });
-      setTimeout(() => navigate('/login'), 2000);
+  const handleAction = () => {
+    if (isRented(movie.id)) {
+      navigate('/my-rentals');
       return;
     }
 
-    // Créer la location
-    const rental = {
-      ...movie,
-      rentalId: `${movie.id}-${Date.now()}`, // ID unique pour chaque location
-      rentalDate: new Date().toISOString(),
-      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 jours
-    };
-
-    // Récupérer les locations existantes
-    const stored = localStorage.getItem('rentals');
-    const existingRentals = stored ? JSON.parse(stored) : [];
-
-    // Vérifier si déjà loué
-    const alreadyRented = existingRentals.some((r) => r.id === movie.id);
-
-    if (alreadyRented) {
-      setNotification({ type: 'error', message: 'Vous avez déjà loué ce film' });
+    if (isInCart(movie.id)) {
+      navigate('/cart');
       return;
     }
 
-    // Ajouter la nouvelle location et sauvegarder
-    const updatedRentals = [...existingRentals, rental];
-    localStorage.setItem('rentals', JSON.stringify(updatedRentals));
+    const result = addToCart(movie);
+    
+    if (result.success) {
+      setNotification({ type: 'success', message: 'Ajouté au panier !' });
+    } else {
+      setNotification({ type: 'error', message: result.message });
+    }
 
-    setNotification({ type: 'success', message: 'Film loué avec succès !' });
-
-    // Rediriger vers MyRentals après 2 secondes
-    setTimeout(() => navigate('/my-rentals'), 2000);
+    setTimeout(() => setNotification(null), 3000);
   };
 
-  if(loading) {
+  if (loading) {
     return (
-      <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
-        <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
-        <div className="w-24 h-24 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-xl">Chargement des infos du film...</p>
+      <div className="bg-black text-white flex flex-col h-screen items-center justify-center">
+        <Navbar />
+        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-xl font-medium">Chargement du film...</p>
       </div>
     );
   }
 
   if (!movie) {
     return (
-      <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
-        <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Film non trouvé</h1>
-            <p className="text-gray-400 mb-6">Désolé, ce film n'existe pas ou a été supprimé.</p>
-            <button
-              onClick={() => navigate('/')}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold"
-            >
-              Retour à l'accueil
-            </button>
-          </div>
+      <div className="bg-black text-white flex flex-col h-screen">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+          <h1 className="text-4xl font-bold mb-4">Film introuvable</h1>
+          <button onClick={() => navigate('/')} className="px-6 py-3 bg-red-600 rounded-lg font-bold">
+            Retour à l'accueil
+          </button>
         </div>
         <Footer />
       </div>
     );
   }
 
+  const getButtonConfig = () => {
+    if (isRented(movie.id)) return { text: 'Déjà loué (Visionner)', color: 'bg-green-600 hover:bg-green-700' };
+    if (isInCart(movie.id)) return { text: 'Voir dans le panier', color: 'bg-blue-600 hover:bg-blue-700' };
+    return { text: `🎬 Louer pour ${movie.price}€`, color: 'bg-red-600 hover:bg-red-700' };
+  };
+
+  const buttonConfig = getButtonConfig();
+
   return (
-    <div className="bg-black text-white flex flex-col h-screen overflow-y-auto">
-      {/* Notification */}
+    <div className="bg-black text-white flex flex-col min-h-screen overflow-x-hidden">
       {notification && (
-        <div className={`fixed top-20 right-4 px-6 py-3 rounded-lg shadow-xl z-50 ${
-          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        <div className={`fixed top-24 right-4 px-6 py-4 rounded-lg shadow-2xl z-50 animate-bounce ${
+          notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
         }`}>
           {notification.message}
         </div>
       )}
       
-      <Navbar movies={movies} onSearch={() => {}} cartItems={[]} onAddToCart={() => {}} onRemoveFromCart={() => {}} />
+      <Navbar />
     
       <div className="flex-1 flex flex-col pt-20">
         <div className="container mx-auto px-4 pt-24">
           <Breadcrumb items={[ { label: 'Films', path: '/' }, { label: movie.genre, path: `/?genre=${movie.genre}` }, { label: movie.title }]} />
         </div>
 
-        {/* Image de fond */}
         <div className="relative h-80 w-full bg-linear-to-b from-gray-900 via-gray-900/80 to-black">
           <img
             src={movie.backdrop}
@@ -119,7 +104,6 @@ function MovieDetail() {
           />
           <div className="absolute inset-0 bg-linear-to-r from-black via-black/50 to-transparent"></div>
           
-          {/* Titre + infos sur l'image */}
           <div className="absolute bottom-0 left-0 right-0 p-8 flex items-end gap-6">
             <div className="flex-1">
               <h1 className="text-5xl font-bold mb-3">{movie.title}</h1>
@@ -133,28 +117,23 @@ function MovieDetail() {
           </div>
         </div>
 
-        {/* Contenu principal */}
         <div className="flex-1 container mx-auto px-4 py-8">
           <div className="grid grid-cols-3 gap-8">
-            {/* Colonne gauche - Synopsis et actions */}
             <div className="col-span-2">
-              {/* Synopsis */}
               <div className="mb-8">
                 <h2 className="text-xl font-bold mb-4">Synopsis</h2>
-                <p className={`text-gray-300 leading-relaxed`}>
+                <p className="text-gray-300 leading-relaxed">
                   {movie.description}
                 </p>
               </div>
 
-              {/* Bouton Louer */}
               <button
-                onClick={handleRent}
-                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded font-bold transition mb-8"
+                onClick={handleAction}
+                className={`px-10 py-4 ${buttonConfig.color} text-white rounded font-black text-xl transition-all transform hover:scale-105 active:scale-95 shadow-lg mb-8`}
               >
-                🎬 Louer pour {movie.price}€
+                {buttonConfig.text}
               </button>
 
-              {/* Informations */}
               <div className="mb-8">
                 <h2 className="text-xl font-bold mb-4">Informations</h2>
                 <table className="w-full text-sm">
@@ -180,12 +159,11 @@ function MovieDetail() {
               </div>
             </div>
 
-            {/* Colonne droite - Poster */}
             <div className="col-span-1">
               <img
                 src={movie.poster}
                 alt={movie.title}
-                className="w-full rounded-lg shadow-2xl"
+                className="w-full rounded-lg shadow-2xl border border-gray-800"
               />
             </div>
           </div>
