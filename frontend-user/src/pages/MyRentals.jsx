@@ -41,13 +41,13 @@ function MyRentals() {
                 />
                 <div className="flex-1">
                   <h2 className="text-xl font-bold mb-1">{rental.title}</h2>
-                  <div className="text-gray-400 text-sm mb-2">
+                  <div className="text-green-500 text-sm mb-2">
                     <p>Loué le : {new Date(rental.rentalDate).toLocaleDateString()}</p>
                     <p className="text-primary font-semibold">
                       Expire le : {new Date(rental.expiryDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <button className="text-sm bg-white text-black px-4 py-1 rounded font-bold hover:bg-gray-200 transition">
+                  <button className="text-sm bg-white text-red-600 px-4 py-1 rounded font-bold hover:bg-gray-200 transition">
                     Visionner
                   </button>
                 </div>

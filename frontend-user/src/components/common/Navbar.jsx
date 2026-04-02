@@ -41,7 +41,7 @@ function Navbar({ movies, onSearch, cartItems, onRemoveFromCart }) {
           {/* Section Gauche : Logo & Liens */}
           <div className="flex items-center space-x-8">
             <h1 className="text-primary text-3xl font-bold tracking-tight cursor-pointer" onClick={() => navigate('/')}>
-              NETFLIX
+              NETFLAX
             </h1>
 
             <ul className="hidden md:flex space-x-6">
